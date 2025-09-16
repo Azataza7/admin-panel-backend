@@ -3,6 +3,7 @@ import cors from "cors";
 import { config } from "dotenv";
 import { logger } from "./logger";
 import { dbConnection } from "./db";
+import UserServiceRoute from "./routes/user.service.ts";
 
 config();
 
@@ -13,7 +14,7 @@ app.use(logger);
 app.use(cors());
 app.use(express.json());
 
-app.use("/users");
+app.use("/users", UserServiceRoute);
 
 const run = async () => {
   await dbConnection();
