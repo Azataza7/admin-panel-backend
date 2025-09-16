@@ -8,13 +8,13 @@ import UserServiceRoute from "./routes/user.service.ts";
 config();
 
 const app = express();
-const PORT = 3000;
+const PORT = 8000;
 
 app.use(logger);
 app.use(cors());
 app.use(express.json());
 
-app.use("/users", UserServiceRoute);
+app.use("/user", UserServiceRoute);
 
 const run = async () => {
   await dbConnection();
