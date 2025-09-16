@@ -1,0 +1,26 @@
+import express from "express";
+import cors from "cors";
+import { config } from "dotenv";
+import { logger } from "./logger";
+import { dbConnection } from "./db";
+
+config();
+
+const app = express();
+const PORT = 3000;
+
+app.use(logger);
+app.use(cors());
+app.use(express.json());
+
+app.use("/users");
+
+const run = async () => {
+  await dbConnection();
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+  });
+};
+
+void run();
