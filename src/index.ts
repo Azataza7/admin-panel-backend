@@ -4,6 +4,8 @@ import { config } from "dotenv";
 import { logger } from "./logger";
 import { dbConnection } from "./db";
 import UserServiceRoute from "./routes/user.service.ts";
+import AdminServiceRoute from "./routes/admin.service.ts";
+import authorizationService from "./routes/authorization.service.ts";
 
 config();
 
@@ -15,6 +17,10 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/user", UserServiceRoute);
+
+//superadmin routes
+app.use("/admin", AdminServiceRoute);
+app.use("/admin", authorizationService);
 
 const run = async () => {
   await dbConnection();

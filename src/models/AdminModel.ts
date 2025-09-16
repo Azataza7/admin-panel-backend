@@ -1,49 +1,40 @@
 import { DataTypes, Model, type Optional } from "sequelize";
 import { sequelize } from "../dbConfig/dbConfig";
 
-export interface UserAttributes {
+export interface AdminModelAttributes {
   id: number;
-  role: "admin" | "user";
-  email: string;
-  branches: number;
+  role: "admin";
+  username: string;
   password: string;
-  organizationName: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export type UserCreationAttributes = Optional<
-  UserAttributes,
+export type AdminModelCreationAttributes = Optional<
+  AdminModelAttributes,
   "id" | "createdAt" | "updatedAt"
 >;
 
-export class User
-  extends Model<UserAttributes, UserCreationAttributes>
-  implements UserAttributes
+export class AdminModel
+  extends Model<AdminModelAttributes, AdminModelCreationAttributes>
+  implements AdminModelAttributes
 {
   declare id: number;
-  declare role: "admin" | "user";
-  declare email: string;
-  declare branches: number;
+  declare username: string;
+  declare role: "admin";
   declare password: string;
-  declare organizationName: string;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
 
-User.init(
+AdminModel.init(
   {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    email: {
-      type: new DataTypes.STRING(128),
-      allowNull: false,
-      unique: true,
-    },
-    organizationName: {
+    username: {
       type: new DataTypes.STRING(128),
       allowNull: false,
       unique: true,
@@ -56,17 +47,13 @@ User.init(
       type: DataTypes.ENUM("admin"),
       allowNull: true,
     },
-    branches: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
   },
   {
-    tableName: "user",
+    tableName: "admin",
     sequelize,
     timestamps: true,
-    indexes: [{ unique: true, fields: ["email"] }],
+    indexes: [{ unique: true, fields: ["username"] }],
   }
 );
 
-export default User;
+export default AdminModel;

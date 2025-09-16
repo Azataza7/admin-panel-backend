@@ -1,10 +1,13 @@
 import { Router } from "express";
 import type { Response, Request, NextFunction } from "express";
+import User from "../models/User.ts";
+import { generatePassword } from "../methods/methods.ts";
 
 const UserServiceRoute = Router();
 
 interface UserToCreate {
   email: string;
+  role: string;
   organizationName: string;
   branches: number;
 }
@@ -12,11 +15,36 @@ interface UserToCreate {
 UserServiceRoute.post(
   "/createUsers",
   async (req: Request, res: Response, next: NextFunction) => {
-    const requestBody: UserToCreate = req.body;
+    try {
+      const userData: UserToCreate = req.body;
 
+      const { organizationName, branches, email } = userData;
 
+      if (!organizationName || !email || !branches) {
+        return res.status(422).send({ error: "Inputs required" });
+      }
 
-    return res.status(200).json({ message: "success" });
+      const hashedPassword = await generatePassword();
+
+      const user = {
+        email: email,
+        organizationName: organizationName,
+        password: hashedPassword,
+        branches: branches,
+        role: "user" as const,
+      };
+
+      const newUser = await User.create(user);
+
+      return res.status(201).json({
+        id: newUser.id,
+        organizationName: newUser.organizationName,
+        role: newUser.role,
+        createdAt: newUser.createdAt,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 );
 
