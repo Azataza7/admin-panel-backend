@@ -24,6 +24,14 @@ UserServiceRoute.post(
         return res.status(422).send({ error: "Inputs required" });
       }
 
+      const existedOrganizationName = await User.findOne({
+        where: { organizationName },
+      });
+
+      if (existedOrganizationName) {
+        return res.status(422).send({ error: "User already exists" });
+      }
+
       const hashedPassword = await generatePassword();
 
       const user = {
@@ -39,6 +47,7 @@ UserServiceRoute.post(
       return res.status(201).json({
         id: newUser.id,
         organizationName: newUser.organizationName,
+        password: newUser.password,
         role: newUser.role,
         token: newUser.token,
         createdAt: newUser.createdAt,
