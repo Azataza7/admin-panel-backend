@@ -12,6 +12,15 @@ interface UserToCreate {
   branches: number;
 }
 
+UserServiceRoute.get(
+  "/getUserList",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await User.findAll();
+
+    return res.status(200).json({ message: "user list", data: result });
+  }
+);
+
 UserServiceRoute.post(
   "/createUsers",
   async (req: Request, res: Response, next: NextFunction) => {
