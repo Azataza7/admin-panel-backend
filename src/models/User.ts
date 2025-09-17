@@ -56,8 +56,9 @@ User.init(
       allowNull: false,
     },
     role: {
-      type: DataTypes.ENUM("admin"),
+      type: DataTypes.ENUM("admin", "user"),
       allowNull: true,
+      defaultValue: "user",
     },
     branches: {
       type: DataTypes.INTEGER,

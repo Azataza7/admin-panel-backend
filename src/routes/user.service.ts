@@ -44,6 +44,7 @@ UserServiceRoute.post(
         createdAt: newUser.createdAt,
       });
     } catch (error) {
+      console.log("ERROR -------" + error);
       next(error);
     }
   }
