@@ -40,6 +40,7 @@ UserServiceRoute.post(
         id: newUser.id,
         organizationName: newUser.organizationName,
         role: newUser.role,
+        token: newUser.token,
         createdAt: newUser.createdAt,
       });
     } catch (error) {

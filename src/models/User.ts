@@ -1,5 +1,6 @@
 import { DataTypes, Model, type Optional } from "sequelize";
 import { sequelize } from "../dbConfig/dbConfig";
+import crypto from "crypto";
 
 export interface UserAttributes {
   id: number;
@@ -7,6 +8,7 @@ export interface UserAttributes {
   email: string;
   branches: number;
   password: string;
+  token?: string;
   organizationName: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -26,6 +28,7 @@ export class User
   declare email: string;
   declare branches: number;
   declare password: string;
+  declare token: string;
   declare organizationName: string;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
@@ -59,6 +62,12 @@ User.init(
     branches: {
       type: DataTypes.INTEGER,
       allowNull: false,
+    },
+    token: {
+      type: new DataTypes.STRING(128),
+      allowNull: false,
+      defaultValue: () =>
+        crypto.randomBytes(32).toString("hex")
     },
   },
   {

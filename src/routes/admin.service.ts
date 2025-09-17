@@ -14,7 +14,7 @@ const AUTH_TOKEN = process.env.AUTHORIZATION_TOKEN;
 
 AdminServiceRoute.post("/signUp", async (req: Request, res: Response, next: NextFunction) => {
   const { username, password }: adminType = req.body;
-  const authorizationToken = req.headers["Authorization"];
+  const authorizationToken = req.get("Auth-token");
 
   if (!authorizationToken) {
     return res.status(401).send({ message: "No token provided" });
@@ -35,7 +35,6 @@ AdminServiceRoute.post("/signUp", async (req: Request, res: Response, next: Next
   const newAdmin = await AdminModel.create(admin);
 
   return res.status(201).json({
-    id: newAdmin.id,
     username: newAdmin.username,
     role: newAdmin.role,
     createdAt: newAdmin.createdAt,

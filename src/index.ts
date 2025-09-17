@@ -13,7 +13,15 @@ const app = express();
 const PORT = 8000;
 
 app.use(logger);
-app.use(cors());
+// app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // только для фронта на 3000 порту
+    methods: ["GET", "POST", "PUT", "DELETE"], // какие методы разрешены
+    credentials: true, // если надо передавать куки или токены
+  })
+);
+
 app.use(express.json());
 
 app.use("/user", UserServiceRoute);
