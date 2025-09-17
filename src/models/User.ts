@@ -10,6 +10,8 @@ export interface UserAttributes {
   password: string;
   token?: string;
   organizationName: string;
+  paidDate: Date;
+  isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -30,6 +32,8 @@ export class User
   declare password: string;
   declare token: string;
   declare organizationName: string;
+  declare paidDate: Date;
+  declare isActive: boolean;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
@@ -67,8 +71,16 @@ User.init(
     token: {
       type: new DataTypes.STRING(128),
       allowNull: false,
-      defaultValue: () =>
-        crypto.randomBytes(32).toString("hex")
+      defaultValue: () => crypto.randomBytes(32).toString("hex"),
+    },
+    paidDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
   },
   {
