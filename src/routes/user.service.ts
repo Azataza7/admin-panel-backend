@@ -66,7 +66,7 @@ UserServiceRoute.post(
 );
 
 UserServiceRoute.put(
-  "/changeUserData",
+  "/changeUserData/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = req.params.id;
