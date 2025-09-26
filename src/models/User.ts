@@ -4,7 +4,7 @@ import crypto from "crypto";
 
 export interface UserAttributes {
   id: number;
-  role: "admin" | "user";
+  role: "owner";
   email: string;
   branches: number;
   password: string;
@@ -26,7 +26,7 @@ export class User
   implements UserAttributes
 {
   declare id: number;
-  declare role: "admin" | "user";
+  declare role: "owner";
   declare email: string;
   declare branches: number;
   declare password: string;
@@ -60,9 +60,9 @@ User.init(
       allowNull: false,
     },
     role: {
-      type: DataTypes.ENUM("admin", "user"),
+      type: DataTypes.ENUM("owner"),
       allowNull: true,
-      defaultValue: "user",
+      defaultValue: "owner",
     },
     branches: {
       type: DataTypes.INTEGER,

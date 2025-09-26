@@ -11,9 +11,9 @@ module.exports = {
         primaryKey: true,
       },
       role: {
-        type: DataTypes.ENUM('admin', 'user'),
+        type: DataTypes.ENUM('owner'),
         allowNull: true,
-        defaultValue: 'user',
+        defaultValue: 'owner',
       },
       email: {
         type: DataTypes.STRING(128),
