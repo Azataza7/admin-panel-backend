@@ -2,6 +2,7 @@ import { Router } from "express";
 import type { Response, Request, NextFunction } from "express";
 import User from "../models/User.ts";
 import { generatePassword } from "../methods/methods.ts";
+import { createClientDatabase } from "../methods/octo_database.ts";
 
 const UserServiceRoute = Router();
 
@@ -52,8 +53,10 @@ UserServiceRoute.post(
         password: hashedPassword,
         branches: branches,
         isActive: isActive,
-        role: "user" as const,
+        role: "admin" as const,
       };
+
+      await createClientDatabase(user);
 
       const newUser = await User.create(user);
 
