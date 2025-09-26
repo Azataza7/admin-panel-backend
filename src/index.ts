@@ -6,6 +6,7 @@ import { dbConnection } from "./db";
 import UserServiceRoute from "./routes/user.service.ts";
 import AdminServiceRoute from "./routes/admin.service.ts";
 import authorizationService from "./routes/authorization.service.ts";
+import BranchServiceRoute from "./routes/branch.service.ts";
 
 config();
 
@@ -25,6 +26,7 @@ app.use(
 app.use(express.json());
 
 app.use("/user", UserServiceRoute);
+app.use("/branches", BranchServiceRoute);
 
 //superadmin routes
 app.use("/admin", AdminServiceRoute);
