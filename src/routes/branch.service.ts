@@ -53,10 +53,14 @@ BranchServiceRoute.post("/", async (req, res, next) => {
     if (!user) {
       return res.status(400).send({error: "User not found"})
     }
-    const branchCount = await Branch.count({ where: { owner_id } });
+    if ((user.branches ?? 0) <= 0) {
+      return res.status(400).send({ error: "User cannot have more branches" });
+    }
 
-    if (branchCount >= user.branches) {
-      return res.status(400).send({error: "Branch count already exists"});
+    const currentBranches = await Branch.count({ where: { owner_id } });
+
+    if (currentBranches >= user.branches) {
+      return res.status(400).send({ error: `User can have only ${user.branches} branches` });
     }
 
     const newBranch = await Branch.create({owner_id, name, phone, address});
