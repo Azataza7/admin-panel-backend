@@ -53,14 +53,18 @@ UserServiceRoute.post(
         password: hashedPassword,
         branches: branches,
         isActive: isActive,
-        role: "admin" as const,
+        role: "owner" as const,
       };
 
-      await createClientDatabase(user);
+      const result = await createClientDatabase(user);
 
-      const newUser = await User.create(user);
+      if (result === 0) {
+        const newUser = await User.create(user);
 
-      return res.status(201).json({ newUser });
+        return res.status(201).json({ newUser });
+      } else {
+        return res.status(500).send({ error: "Database issue" });
+      }
     } catch (error) {
       console.log("ERROR -------" + error);
       next(error);
@@ -105,7 +109,7 @@ UserServiceRoute.put(
       user.password = hashedPassword;
       user.branches = branches;
       user.isActive = isActive;
-      user.role = "user";
+      user.role = "owner";
 
       await user.save();
 
@@ -118,24 +122,24 @@ UserServiceRoute.put(
 );
 
 UserServiceRoute.delete(
-    "/deleteUserData/:id",
-    async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const userId = req.params.id;
+  "/deleteUserData/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.params.id;
 
-            const user = await User.findByPk(userId);
-            if (!user) {
-                return res.status(404).json({ error: "User not found" });
-            }
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
 
-            await user.destroy();
+      await user.destroy();
 
-            return res.status(200).json({ message: "User deleted successfully" });
-        } catch (error) {
-            console.error("ERROR -------", error);
-            next(error);
-        }
+      return res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error("ERROR -------", error);
+      next(error);
     }
+  }
 );
 
 export default UserServiceRoute;
