@@ -16,7 +16,7 @@ const options = {
         url: "http://localhost:8000",
       },
       {
-        url: "https://instant-arlena-promconsulting-cb589535.koyeb.app/",
+        url: "scattered-ermentrude-promconsulting-23cbccde.koyeb.app/",
       },
     ],
   },
