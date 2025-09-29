@@ -10,7 +10,7 @@ export interface BranchAttributes {
   address: string;
   createdAt?: Date;
   updatedAt?: Date;
-  status: boolean; //добавлен статус. Диактивировать может только владелец
+  status: boolean;
 }
 
 export type BranchCreationAttributes = Optional<BranchAttributes,
@@ -63,6 +63,7 @@ Branch.init({
   });
 
 // Branches связан лишь с одним владельцем
+Branch.belongsTo(User, { as: "owner", foreignKey: "owner_id" });
 Branch.beforeCreate(async (branch) => {
   const owner = await User.findByPk(branch.owner_id);
   if (!owner || owner.role !== "owner") {
