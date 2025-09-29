@@ -10,10 +10,11 @@ export interface BranchAttributes {
   address: string;
   createdAt?: Date;
   updatedAt?: Date;
+  status: boolean; //добавлен статус. Диактивировать может только владелец
 }
 
 export type BranchCreationAttributes = Optional<BranchAttributes,
-| "id" | "createdAt" | "updatedAt"
+  | "id" | "createdAt" | "updatedAt" | "status"
 >;
 
 export class Branch extends
@@ -23,33 +24,38 @@ export class Branch extends
   declare name: string;
   declare phone: string;
   declare address: string;
+  declare status: boolean;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
 
 Branch.init({
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    owner_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    address: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    }
   },
-  owner_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  phone: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  address: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-  }
-},
   {
     sequelize,
     tableName: "branches",
