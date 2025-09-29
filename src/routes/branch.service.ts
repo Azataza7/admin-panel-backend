@@ -5,6 +5,138 @@ import User from "../models/User.ts";
 
 const BranchServiceRoute = express.Router();
 
+/**
+ * @openapi
+ * /branches:
+ *   get:
+ *     summary: Получить список филиалов
+ *     tags:
+ *       - Branch
+ *     parameters:
+ *       - in: query
+ *         name: owner
+ *         schema:
+ *           type: integer
+ *         description: ID владельца для фильтрации
+ *     responses:
+ *       200:
+ *         description: Список филиалов
+ *         content:
+ *           application/json:
+ *             example:
+ *               - id: 1
+ *                 owner_id: 2
+ *                 name: "Main Office"
+ *                 phone: "+123456789"
+ *                 address: "ул. Ленина, 1"
+ *               - id: 2
+ *                 owner_id: 2
+ *                 name: "Branch 2"
+ *                 phone: "+987654321"
+ *                 address: "ул. Советская, 5"
+ */
+
+/**
+ * @openapi
+ * /branches/{id}:
+ *   get:
+ *     summary: Получить филиал по ID
+ *     tags:
+ *       - Branch
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID филиала
+ *     responses:
+ *       200:
+ *         description: Филиал найден
+ *         content:
+ *           application/json:
+ *             example:
+ *               id: 1
+ *               owner_id: 2
+ *               name: "Main Office"
+ *               phone: "+123456789"
+ *               address: "ул. Ленина, 1"
+ *       404:
+ *         description: Branch not found
+ */
+
+/**
+ * @openapi
+ * /branches:
+ *   post:
+ *     summary: Создать филиал
+ *     tags:
+ *       - Branch
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           example:
+ *             owner_id: 2
+ *             name: "New Branch"
+ *             phone: "+777777777"
+ *             address: "ул. Победы, 10"
+ *     responses:
+ *       200:
+ *         description: Branch created
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Branch created successfully."
+ *               newBranch:
+ *                 id: 3
+ *                 owner_id: 2
+ *                 name: "New Branch"
+ *                 phone: "+777777777"
+ *                 address: "ул. Победы, 10"
+ *       400:
+ *         description: Ошибка валидации
+ */
+
+/**
+ * @openapi
+ * /branches/{id}:
+ *   patch:
+ *     summary: Обновить филиал
+ *     tags:
+ *       - Branch
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID филиала
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           example:
+ *             name: "Updated Branch"
+ *             phone: "+111111111"
+ *             address: "ул. Гагарина, 25"
+ *     responses:
+ *       200:
+ *         description: Branch updated
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Branch updated successfully"
+ *               branch:
+ *                 id: 1
+ *                 owner_id: 2
+ *                 name: "Updated Branch"
+ *                 phone: "+111111111"
+ *                 address: "ул. Гагарина, 25"
+ *       404:
+ *         description: Branch not found
+ */
+
 BranchServiceRoute.get("/", async (req, res, next) => {
   try {
     const {owner} = req.query;

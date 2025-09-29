@@ -7,6 +7,7 @@ import UserServiceRoute from "./routes/user.service.ts";
 import AdminServiceRoute from "./routes/admin.service.ts";
 import authorizationService from "./routes/authorization.service.ts";
 import BranchServiceRoute from "./routes/branch.service.ts";
+import { setupSwagger } from "../swagger.ts";
 
 config();
 
@@ -22,15 +23,16 @@ app.use(
     credentials: true, // если надо передавать куки или токены
   })
 );
-
 app.use(express.json());
-
 app.use("/user", UserServiceRoute);
-app.use("/branches", BranchServiceRoute);
 
+app.use("/branches", BranchServiceRoute);
 //superadmin routes
+
 app.use("/admin", AdminServiceRoute);
 app.use("/admin", authorizationService);
+
+setupSwagger(app);
 
 const run = async () => {
   await dbConnection();
