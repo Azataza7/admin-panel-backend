@@ -225,4 +225,26 @@ BranchServiceRoute.patch("/:id", async (req, res, next) => {
   }
 });
 
+BranchServiceRoute.patch("/:id/deactivate", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const branch = await Branch.findByPk(id);
+    if (!branch) {
+      return res.status(404).send({ error: "Branch not found" });
+    }
+
+    if (!branch.status) {
+      return res.status(401).send({message: "Permission denied"})
+    }
+
+    branch.status = false;
+    await branch.save();
+    return res.send({ message: `You have deactivated the branch: ${branch.name}` });
+
+  } catch (e) {
+    next(e);
+  }
+});
+
 export default BranchServiceRoute;
