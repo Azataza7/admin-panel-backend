@@ -42,24 +42,24 @@ User.init(
       primaryKey: true,
     },
     first_name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false,
     },
     last_name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: true,
     },
     email: {
-      type: new DataTypes.STRING(128),
+      type: DataTypes.STRING(128),
       allowNull: false,
       unique: true,
     },
     password: {
-      type: new DataTypes.STRING(255),
+      type: DataTypes.STRING(255),
       allowNull: false,
     },
     token: {
-      type: new DataTypes.STRING(128),
+      type: DataTypes.STRING(128),
       allowNull: false,
       defaultValue: () => crypto.randomBytes(32).toString("hex"),
     },
@@ -70,7 +70,7 @@ User.init(
     },
   },
   {
-    tableName: "user",
+    tableName: "users",
     sequelize,
     timestamps: true,
     indexes: [{ unique: true, fields: ["email"] }],

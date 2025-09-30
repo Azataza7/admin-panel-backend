@@ -34,27 +34,15 @@ Organization.init({
     primaryKey: true,
     autoIncrement: true,
   },
-  user_id:{
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
+  user_id:{ type: DataTypes.INTEGER, allowNull: false },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
   },
-  branches: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  paidDate: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-  isActive: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true,
-  }
+  branches: { type: DataTypes.STRING, allowNull: false, },
+  paidDate: { type: DataTypes.DATE, allowNull: false, },
+  isActive: { type: DataTypes.BOOLEAN, defaultValue: true, }
 },{
   sequelize,
   tableName: "organizations",
