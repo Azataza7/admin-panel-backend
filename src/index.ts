@@ -12,7 +12,7 @@ import { setupSwagger } from "../swagger.ts";
 config();
 
 const app = express();
-const PORT = 3000;
+const PORT = 8000;
 
 app.use(logger);
 // app.use(cors());
