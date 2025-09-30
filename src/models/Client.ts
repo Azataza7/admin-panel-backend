@@ -1,5 +1,6 @@
 import { DataTypes, Model, type Optional } from "sequelize";
 import { sequelize } from "../dbConfig/dbConfig.ts";
+import Organization from "./Organization.ts";
 
 export interface ClientAttributes {
   id: number;
@@ -47,11 +48,19 @@ Client.init({
     primaryKey: true,
   },
   organization_id: { type: DataTypes.INTEGER, allowNull: true },
-  source_id: { type: DataTypes.TEXT, allowNull: false, },
+  source_id: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+    unique: true,
+  },
   first_name: { type: DataTypes.STRING, allowNull: false },
   last_name: { type: DataTypes.STRING, allowNull: true },
   custom_name: { type: DataTypes.STRING, allowNull: true },
-  phone_number: { type: DataTypes.STRING, allowNull: false },
+  phone_number: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
   is_active: { type: DataTypes.BOOLEAN, defaultValue: true },
 },{
   sequelize,
@@ -60,6 +69,7 @@ Client.init({
   indexes: [{ unique: true, fields: ["source_id", "phone_number"] }],
 });
 
-//еще должна быть связка с таблицей организации
+Client.belongsTo(Organization, {as: "organization", foreignKey: "organization_id"});
+Organization.hasMany(Client, {as: "client", foreignKey: "organization_id"});
 
 export default Client;

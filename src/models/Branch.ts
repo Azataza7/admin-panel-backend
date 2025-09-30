@@ -1,30 +1,30 @@
 import { DataTypes, Model, type Optional } from "sequelize";
 import { sequelize } from "../dbConfig/dbConfig.ts";
-import User from "./User.ts";
+import Organization from "./Organization.ts";
 
 export interface BranchAttributes {
   id: number;
-  owner_id: number;
+  organization_id: number;
   name: string;
   phone: string;
   address: string;
   createdAt?: Date;
   updatedAt?: Date;
-  status: boolean;
+  isActive: boolean;
 }
 
 export type BranchCreationAttributes = Optional<BranchAttributes,
-  | "id" | "createdAt" | "updatedAt" | "status"
+  | "id" | "createdAt" | "updatedAt" | "isActive"
 >;
 
 export class Branch extends
   Model<BranchAttributes, BranchCreationAttributes> implements BranchAttributes {
   declare id: number;
-  declare owner_id: number;
+  declare organization_id: number;
   declare name: string;
   declare phone: string;
   declare address: string;
-  declare status: boolean;
+  declare isActive: boolean;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
@@ -35,7 +35,7 @@ Branch.init({
       autoIncrement: true,
       primaryKey: true,
     },
-    owner_id: {
+    organization_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -51,7 +51,7 @@ Branch.init({
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    status: {
+    isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     }
@@ -62,20 +62,11 @@ Branch.init({
     timestamps: true,
   });
 
-// Branches связан лишь с одним владельцем
-Branch.belongsTo(User, { as: "owner", foreignKey: "owner_id" });
-Branch.beforeCreate(async (branch) => {
-  const owner = await User.findByPk(branch.owner_id);
-  if (!owner || owner.role !== "owner") {
-    throw new Error("Branch owner must be a user with role 'user'");
-  }
-});
+Branch.belongsTo(Organization, { as: "organization", foreignKey: "organization_id" });
 
-//Владелец может иметь несколько филиалов
-User.hasMany(Branch, {
-  as: "ownedBranches",
-  foreignKey: "owner_id",
-  scope: { role: "owner" },
+Organization.hasMany(Branch, {
+  as: "organizationBranches",
+  foreignKey: "organization_id",
 });
 
 
