@@ -1,8 +1,10 @@
 import express from "express";
-import Client from "../models/Client.ts";
 import ClientActivity from "../models/ClientActivity.ts";
 import { nanoid } from "nanoid";
 import Branch from "../models/Branch.ts";
+import Client from "../models/Client.ts";
+import Organization from "../models/Organization.ts";
+
 
 const ClientServiceRouter = express.Router();
 
@@ -26,10 +28,12 @@ ClientServiceRouter.post("/", async (req, res, next) => {
       first_name,
       last_name,
       phone_number,
+      branch_id,
       source,
+      organizationId
     } = req.body;
 
-    if (!first_name || !phone_number) {
+    if (!first_name || !phone_number || !branch_id) {
       return res.status(400).json({ message: "Required fields are missing" });
     }
 
@@ -37,26 +41,38 @@ ClientServiceRouter.post("/", async (req, res, next) => {
       where: {phone_number},
     });
 
+    const existingBranch = await Branch.findByPk(branch_id);
+    const existingOrg = await Organization.findByPk(organizationId);
+    console.log(existingOrg);
+
     if (existingClient) {
       return res.status(400).json({ message: "Client already exists" });
+    }
+
+    if (!existingBranch) {
+      return res.status(400).json({ message: "Branch  not found" });
+    }
+
+    if (!existingOrg) {
+      return res.status(400).json({ message: "Organization not found" });
     }
 
     const source_id = `${source}_${Date.now()}_${nanoid(6)}`;
 
     const client = await Client.create({
       first_name,
-      organization_id: 27,
       last_name: last_name || null,
       phone_number: phone_number.trim(),
       source_id,
       is_active: true,
+      organization_id: organizationId,
     });
 
     const clientActivity = await ClientActivity.create({
-        client_id: client.id,
-        branch_id: 1,
-        service_id: 1,
-      });
+      client_id: client.id,
+      branch_id,
+      service_id: 1,
+    });
 
     console.log(clientActivity);
 
