@@ -3,7 +3,9 @@ import { Router } from "express";
 import User from "../models/User.ts";
 import { generatePassword } from "../methods/methods.ts";
 import { createClientDatabase } from "../methods/octo_database.ts";
-import bcrypt from "bcrypt";
+import { env } from "../dbConfig/dbConfig.ts";
+import jwt from "jsonwebtoken";
+
 
 const UserServiceRoute = Router();
 
@@ -210,9 +212,20 @@ UserServiceRoute.post("/auth", async (req: Request, res: Response, next: NextFun
       });
     }
 
+    const token = jwt.sign(
+      {
+        id: user.id,
+        role: user.role,
+        organizationName: user.organizationName,
+      },
+      env.JWT_SECRET!,
+      { expiresIn: "24h" } // срок жизни токена
+    );
+
     return res.status(200).json({
       success: true,
       message: "Success",
+      token,
       user: {
         id: user.id,
         databaseName: user.organizationName,
