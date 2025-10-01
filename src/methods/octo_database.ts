@@ -3,12 +3,11 @@ import { Umzug, SequelizeStorage } from "umzug";
 import { Sequelize } from "sequelize";
 
 interface clientDataType {
-  organizationName: string;
+  name: string;
 }
 
 export async function createClientDatabase(clientData: clientDataType) {
-  const databaseName = clientData.organizationName;
-
+  const databaseName = clientData.name;
   try {
     // 1. Создаём БД
     await masterDb.query(`CREATE DATABASE "${databaseName}";`);
@@ -38,7 +37,7 @@ export async function createClientDatabase(clientData: clientDataType) {
       });
 
       console.log("----------- Migrating database -------");
-      await migrator.up();
+      // await migrator.up();
 
       console.log(`✅ MIGRATIONS applied for ${databaseName}`);
       await clientDb.close();

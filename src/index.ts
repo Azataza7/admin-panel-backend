@@ -8,6 +8,8 @@ import AdminServiceRoute from "./routes/admin.service.ts";
 import authorizationService from "./routes/authorization.service.ts";
 import BranchServiceRoute from "./routes/branch.service.ts";
 import { setupSwagger } from "../swagger.ts";
+import ClientServiceRouter from "./routes/client.service.ts";
+import OrganizationServiceRoute from "./routes/organization.service.ts";
 
 config();
 
@@ -25,10 +27,11 @@ app.use(
 );
 app.use(express.json());
 app.use("/user", UserServiceRoute);
-
 app.use("/branches", BranchServiceRoute);
-//superadmin routes
+app.use("/clients", ClientServiceRouter);
+app.use("/organization", OrganizationServiceRoute);
 
+//superadmin routes
 app.use("/admin", AdminServiceRoute);
 app.use("/admin", authorizationService);
 

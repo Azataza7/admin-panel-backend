@@ -4,13 +4,11 @@ import crypto from "crypto";
 
 export interface UserAttributes {
   id: number;
-  role: "owner";
+  first_name: string;
+  last_name?: string;
   email: string;
-  branches: number;
   password: string;
   token?: string;
-  organizationName: string;
-  paidDate: Date;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -18,7 +16,7 @@ export interface UserAttributes {
 
 export type UserCreationAttributes = Optional<
   UserAttributes,
-  "id" | "createdAt" | "updatedAt"
+  "id" | "last_name" | "createdAt" | "updatedAt"
 >;
 
 export class User
@@ -26,13 +24,11 @@ export class User
   implements UserAttributes
 {
   declare id: number;
-  declare role: "owner";
+  declare first_name: string;
+  declare last_name: string;
   declare email: string;
-  declare branches: number;
   declare password: string;
   declare token: string;
-  declare organizationName: string;
-  declare paidDate: Date;
   declare isActive: boolean;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
@@ -45,37 +41,27 @@ User.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    email: {
-      type: new DataTypes.STRING(128),
+    first_name: {
+      type: DataTypes.STRING(255),
       allowNull: false,
-      unique: true,
     },
-    organizationName: {
-      type: new DataTypes.STRING(128),
+    last_name: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    email: {
+      type: DataTypes.STRING(128),
       allowNull: false,
       unique: true,
     },
     password: {
-      type: new DataTypes.STRING(255),
-      allowNull: false,
-    },
-    role: {
-      type: DataTypes.ENUM("owner"),
-      allowNull: true,
-      defaultValue: "owner",
-    },
-    branches: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(255),
       allowNull: false,
     },
     token: {
-      type: new DataTypes.STRING(128),
+      type: DataTypes.STRING(128),
       allowNull: false,
       defaultValue: () => crypto.randomBytes(32).toString("hex"),
-    },
-    paidDate: {
-      type: DataTypes.DATE,
-      allowNull: true,
     },
     isActive: {
       type: DataTypes.BOOLEAN,
@@ -84,7 +70,7 @@ User.init(
     },
   },
   {
-    tableName: "user",
+    tableName: "users",
     sequelize,
     timestamps: true,
     indexes: [{ unique: true, fields: ["email"] }],

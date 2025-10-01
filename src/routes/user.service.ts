@@ -6,16 +6,13 @@ import { createClientDatabase } from "../methods/octo_database.ts";
 import { env } from "../dbConfig/dbConfig.ts";
 import jwt from "jsonwebtoken";
 
-
 const UserServiceRoute = Router();
 
 interface UserToCreate {
+  first_name: string;
+  last_name?: string;
   email: string;
-  role: string;
-  paidDate: Date;
   isActive: boolean;
-  organizationName: string;
-  branches: number;
 }
 
 type UserAuthorization = {
@@ -99,12 +96,16 @@ type UserAuthorization = {
  */
 
 UserServiceRoute.get("/getUserList", async (req: Request, res: Response, next: NextFunction) => {
-  const result = await User.findAll();
+  try {
+    const result = await User.findAll();
 
-  return res.status(200).json({
-    message: "user list",
-    data: result,
-  });
+    return res.status(200).json({
+      message: "user list",
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
 });
 
 /**
@@ -228,8 +229,6 @@ UserServiceRoute.post("/auth", async (req: Request, res: Response, next: NextFun
       token,
       user: {
         id: user.id,
-        databaseName: user.organizationName,
-        role: user.role,
       },
     });
   } catch (e) {
@@ -343,21 +342,22 @@ UserServiceRoute.post("/createUsers", async (req: Request, res: Response, next: 
   try {
     const userData: UserToCreate = req.body;
 
-    const { organizationName, branches, email, paidDate, isActive } = userData;
+    const { first_name, email, last_name, isActive } = userData;
 
-    if (!organizationName || !email || !branches) {
+    if (!first_name || !email) {
       return res.status(422).send({
         error: "Inputs required",
       });
     }
 
-    const existedOrganizationName = await User.findOne({
+    const existingUser = await User.findOne({
       where: {
-        organizationName,
+        email,
       },
     });
+    console.log(existingUser);
 
-    if (existedOrganizationName) {
+    if (existingUser) {
       return res.status(422).send({
         error: "User already exists",
       });
@@ -365,29 +365,15 @@ UserServiceRoute.post("/createUsers", async (req: Request, res: Response, next: 
 
     const hashedPassword = await generatePassword();
 
-    const user = {
-      email: email,
-      organizationName: organizationName,
-      paidDate: paidDate,
-      password: hashedPassword,
-      branches: branches,
-      isActive: isActive,
-      role: "owner" as const,
-    };
-
-    const result = await createClientDatabase(user);
-
-    if (result === 0) {
-      const newUser = await User.create(user);
-
-      return res.status(201).json({
-        newUser,
+    const user = await User.create({
+        email: email,
+        first_name,
+        last_name,
+        password: hashedPassword,
+        isActive: isActive,
       });
-    } else {
-      return res.status(500).send({
-        error: "Database issue",
-      });
-    }
+
+    return res.send({ message: "New user added", user });
   } catch (error) {
     console.log("ERROR -------" + error);
     next(error);
@@ -509,14 +495,15 @@ UserServiceRoute.post("/createUsers", async (req: Request, res: Response, next: 
  *               error: "Internal server error"
  */
 
+//можно менять пароль и убрать email isActive
 UserServiceRoute.put("/changeUserData/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.params.id;
     const userData: UserToCreate = req.body;
 
-    const { organizationName, branches, email, paidDate, isActive } = userData;
+    const { first_name, last_name, email, isActive } = userData;
 
-    if (!organizationName || !email || !branches) {
+    if (!first_name || !email) {
       return res.status(422).send({
         error: "Inputs required",
       });
@@ -530,16 +517,16 @@ UserServiceRoute.put("/changeUserData/:id", async (req: Request, res: Response, 
       });
     }
 
-    // проверяем, что organizationName не занят другим пользователем
-    const existedOrganizationName = await User.findOne({
+    // проверяем, что email не занят другим пользователем
+    const existingEmail = await User.findOne({
       where: {
-        organizationName,
+        email,
       },
     });
 
-    if (existedOrganizationName && existedOrganizationName.id !== Number(userId)) {
+    if (existingEmail && existingEmail.id !== Number(userId)) {
       return res.status(422).send({
-        error: "Organization name already taken",
+        error: "A user with this email address already exists.",
       });
     }
 
@@ -547,12 +534,9 @@ UserServiceRoute.put("/changeUserData/:id", async (req: Request, res: Response, 
 
     // обновляем все поля
     user.email = email;
-    user.organizationName = organizationName;
-    user.paidDate = paidDate;
+    if(last_name) user.last_name = last_name;
     user.password = hashedPassword;
-    user.branches = branches;
     user.isActive = isActive;
-    user.role = "owner";
 
     await user.save();
 
