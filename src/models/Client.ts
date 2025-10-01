@@ -5,7 +5,7 @@ import Organization from "./Organization.ts";
 export interface ClientAttributes {
   id: number;
   organization_id: number;
-  source_id: string; // telegram_id создан через календарь/месенджер или сам через онлайн запись на сайте
+  source_id: string; // telegram_id создан через календарь/месенджер или сам через онлайн запись на сайте. 	manual/calendar/phone
   first_name: string;
   last_name?: string | null;
   custom_name?: string | null; // связан с интеграцией

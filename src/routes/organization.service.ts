@@ -13,6 +13,7 @@ interface OrganizationCreate {
 
 const OrganizationServiceRoute = express.Router();
 
+//фильтрация по id owner
 OrganizationServiceRoute.get("/", async (req, res, next) => {
   try  {
     const list = await Organization.findAll();
@@ -32,21 +33,19 @@ OrganizationServiceRoute.get("/:id", async (req, res, next) => {
   }
 });
 
-OrganizationServiceRoute.post("/:userId", async (req, res, next) => {
+OrganizationServiceRoute.post("/", async (req, res, next) => {
   try {
     const {
       name,
       branches,
-      paidDate
+      paidDate,
+      userId
     } = req.body ;
 
-    const {userId} = req.params;
 
-    if (!paidDate || !name || !branches) {
+    if (!paidDate || !name || !branches || !userId) {
       return res.status(400).send({error: "Inputs required"});
     }
-
-    console.log(name);
 
     const existingOrganization = await Organization.findOne({
       where: { name },
@@ -71,7 +70,6 @@ OrganizationServiceRoute.post("/:userId", async (req, res, next) => {
     };
 
     const result = await createClientDatabase(organization);
-    console.log("result", result);
 
     if (result === 0) {
       const newOrganization = await Organization.create(organization);

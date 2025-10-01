@@ -8,6 +8,8 @@ import Organization from "../models/Organization.ts";
 
 const ClientServiceRouter = express.Router();
 
+
+//фильтрация по источнику
 ClientServiceRouter.get("/", async (req, res, next) => {
   try {
     const clients = await Client.findAll();

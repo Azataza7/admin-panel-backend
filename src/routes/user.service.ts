@@ -481,6 +481,7 @@ UserServiceRoute.post("/createUsers", async (req: Request, res: Response, next: 
  *               error: "Internal server error"
  */
 
+//можно менять пароль и убрать email isActive
 UserServiceRoute.put("/changeUserData/:id", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.params.id;
