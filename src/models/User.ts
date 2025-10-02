@@ -6,6 +6,7 @@ export interface UserAttributes {
   id: number;
   first_name: string;
   last_name?: string;
+  role: string;
   email: string;
   password: string;
   token?: string;
@@ -26,6 +27,7 @@ export class User
   declare id: number;
   declare first_name: string;
   declare last_name: string;
+  declare role: string;
   declare email: string;
   declare password: string;
   declare token: string;
@@ -48,6 +50,10 @@ User.init(
     last_name: {
       type: DataTypes.STRING(255),
       allowNull: true,
+    },
+    role: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
     },
     email: {
       type: DataTypes.STRING(128),

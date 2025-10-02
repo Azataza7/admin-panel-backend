@@ -1,19 +1,13 @@
 import type { NextFunction, Request, Response } from "express";
 import { Router } from "express";
 import User from "../models/User.ts";
-import { generatePassword } from "../methods/methods.ts";
-import { createClientDatabase } from "../methods/octo_database.ts";
 import { env } from "../dbConfig/dbConfig.ts";
 import jwt from "jsonwebtoken";
+import type { UserToCreate } from "../types";
+import bcrypt from "bcrypt";
+import Organization from "../models/Organization.ts";
 
 const UserServiceRoute = Router();
-
-interface UserToCreate {
-  first_name: string;
-  last_name?: string;
-  email: string;
-  isActive: boolean;
-}
 
 type UserAuthorization = {
   email: string;
@@ -95,18 +89,21 @@ type UserAuthorization = {
  *                   updatedAt: "2025-09-26T08:03:07.767Z"
  */
 
-UserServiceRoute.get("/getUserList", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const result = await User.findAll();
+UserServiceRoute.get(
+  "/getUserList",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await User.findAll();
 
-    return res.status(200).json({
-      message: "user list",
-      data: result,
-    });
-  } catch (e) {
-    next(e);
+      return res.status(200).json({
+        message: "user list",
+        data: result,
+      });
+    } catch (e) {
+      next(e);
+    }
   }
-});
+);
 
 /**
  * @openapi
@@ -182,203 +179,78 @@ UserServiceRoute.get("/getUserList", async (req: Request, res: Response, next: N
  *               message: "Internal server error"
  */
 
-UserServiceRoute.post("/auth", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { email, password }: UserAuthorization = req.body;
+UserServiceRoute.post(
+  "/auth",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, password }: UserAuthorization = req.body;
 
-    if (!email || !password) {
-      return res.status(401).send({
-        error: "email or password required",
+      if (!email || !password) {
+        return res.status(401).send({
+          error: "email or password required",
+        });
+      }
+
+      const user = await User.findOne({
+        where: {
+          email,
+        },
+        attributes: ["id", "email", "password", "role"],
       });
-    }
 
-    const user = await User.findOne({
-      where: {
-        email,
-      },
-      attributes: ["id", "email", "password", "role", "organizationName"],
-    });
+      if (!user) {
+        return res.status(401).send({
+          success: false,
+          message: "Invalid credentials user",
+        });
+      }
 
-    if (!user) {
-      return res.status(401).send({
+      const organization = await Organization.findOne({
+        where: { user_id: user.id },
+      });
+
+      if (!organization) {
+        return res
+          .status(401)
+          .send({ message: "No organization found for this user" });
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          success: false,
+          message: "Invalid credentials password",
+        });
+      }
+
+      const token = jwt.sign(
+        {
+          id: user.id,
+          role: user.role,
+          organizationName: organization.name,
+        },
+        env.JWT_SECRET!,
+        { expiresIn: "24h" } // срок жизни токена
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: "Success",
+        token,
+        user: {
+          id: user.id,
+        },
+      });
+    } catch (e) {
+      console.error("Login error:", e);
+      return res.status(500).json({
         success: false,
-        message: "Invalid credentials user",
+        message: "Internal server error",
       });
     }
-
-    if (password !== user.password) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid credentials password",
-      });
-    }
-
-    const token = jwt.sign(
-      {
-        id: user.id,
-        role: user.role,
-        organizationName: user.organizationName,
-      },
-      env.JWT_SECRET!,
-      { expiresIn: "24h" } // срок жизни токена
-    );
-
-    return res.status(200).json({
-      success: true,
-      message: "Success",
-      token,
-      user: {
-        id: user.id,
-      },
-    });
-  } catch (e) {
-    console.error("Login error:", e);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
   }
-});
-
-/**
- * @openapi
- * /user/createUsers:
- *   post:
- *     summary: Создать нового пользователя и базу данных для него
- *     tags:
- *       - User
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - organizationName
- *               - email
- *               - branches
- *             properties:
- *               organizationName:
- *                 type: string
- *                 example: "kulikov6"
- *               email:
- *                 type: string
- *                 example: "kulik6@gmail.com"
- *               branches:
- *                 type: integer
- *                 example: 5
- *               paidDate:
- *                 type: string
- *                 format: date-time
- *                 example: "2025-09-17T15:45:00.000Z"
- *               isActive:
- *                 type: boolean
- *                 example: true
- *           example:
- *             organizationName: "kulikov6"
- *             email: "kulik6@gmail.com"
- *             branches: 5
- *             paidDate: "2025-09-17T15:45:00.000Z"
- *             isActive: true
- *     responses:
- *       201:
- *         description: Пользователь успешно создан
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 newUser:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                       example: 28
- *                     email:
- *                       type: string
- *                       example: "kulik6@gmail.com"
- *                     organizationName:
- *                       type: string
- *                       example: "kulikov6"
- *                     branches:
- *                       type: integer
- *                       example: 5
- *                     role:
- *                       type: string
- *                       example: "owner"
- *                     isActive:
- *                       type: boolean
- *                       example: true
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-09-26T08:03:07.767Z"
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-09-26T08:03:07.767Z"
- *       422:
- *         description: Ошибка валидации или пользователь уже существует
- *         content:
- *           application/json:
- *             examples:
- *               missingFields:
- *                 summary: Обязательные поля не указаны
- *                 value:
- *                   error: "Inputs required"
- *               duplicateUser:
- *                 summary: Пользователь с таким organizationName уже существует
- *                 value:
- *                   error: "User already exists"
- *       500:
- *         description: Проблема с созданием базы данных
- *         content:
- *           application/json:
- *             example:
- *               error: "Database issue"
- */
-
-UserServiceRoute.post("/createUsers", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userData: UserToCreate = req.body;
-
-    const { first_name, email, last_name, isActive } = userData;
-
-    if (!first_name || !email) {
-      return res.status(422).send({
-        error: "Inputs required",
-      });
-    }
-
-    const existingUser = await User.findOne({
-      where: {
-        email,
-      },
-    });
-    console.log(existingUser);
-
-    if (existingUser) {
-      return res.status(422).send({
-        error: "User already exists",
-      });
-    }
-
-    const hashedPassword = await generatePassword();
-
-    const user = await User.create({
-        email: email,
-        first_name,
-        last_name,
-        password: hashedPassword,
-        isActive: isActive,
-      });
-
-    return res.send({ message: "New user added", user });
-  } catch (error) {
-    console.log("ERROR -------" + error);
-    next(error);
-  }
-});
+);
 
 /**
  * @openapi
@@ -450,9 +322,6 @@ UserServiceRoute.post("/createUsers", async (req: Request, res: Response, next: 
  *                     branches:
  *                       type: integer
  *                       example: 5
- *                     role:
- *                       type: string
- *                       example: "owner"
  *                     isActive:
  *                       type: boolean
  *                       example: true
@@ -496,58 +365,65 @@ UserServiceRoute.post("/createUsers", async (req: Request, res: Response, next: 
  */
 
 //можно менять пароль и убрать email isActive
-UserServiceRoute.put("/changeUserData/:id", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.params.id;
-    const userData: UserToCreate = req.body;
 
-    const { first_name, last_name, email, isActive } = userData;
+interface UserToChange extends UserToCreate {
+  password: string;
+}
 
-    if (!first_name || !email) {
-      return res.status(422).send({
-        error: "Inputs required",
+UserServiceRoute.put(
+  "/changeUserData/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.params.id;
+      const userData: UserToChange = req.body;
+
+      const { first_name, last_name, password, email } = userData;
+
+      if (!first_name || !last_name) {
+        return res.status(422).send({
+          error: "Inputs required",
+        });
+      }
+
+      // ищем пользователя
+      const user = await User.findByPk(userId);
+
+      if (!user) {
+        return res.status(404).send({
+          error: "User not found",
+        });
+      }
+
+      // проверяем, что email не занят другим пользователем
+      const existingEmail = await User.findOne({
+        where: {
+          email,
+        },
       });
-    }
 
-    // ищем пользователя
-    const user = await User.findByPk(userId);
-    if (!user) {
-      return res.status(404).send({
-        error: "User not found",
+      if (existingEmail && existingEmail.id !== Number(userId)) {
+        return res.status(422).send({
+          error: "A user with this email address already exists.",
+        });
+      }
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // обновляем все поля
+      if (last_name) user.last_name = last_name;
+      if (first_name) user.first_name = first_name;
+      user.password = hashedPassword;
+
+      await user.save();
+
+      return res.status(200).json({
+        user,
       });
+    } catch (error) {
+      console.error("ERROR -------", error);
+      next(error);
     }
-
-    // проверяем, что email не занят другим пользователем
-    const existingEmail = await User.findOne({
-      where: {
-        email,
-      },
-    });
-
-    if (existingEmail && existingEmail.id !== Number(userId)) {
-      return res.status(422).send({
-        error: "A user with this email address already exists.",
-      });
-    }
-
-    const hashedPassword = await generatePassword();
-
-    // обновляем все поля
-    user.email = email;
-    if(last_name) user.last_name = last_name;
-    user.password = hashedPassword;
-    user.isActive = isActive;
-
-    await user.save();
-
-    return res.status(200).json({
-      user,
-    });
-  } catch (error) {
-    console.error("ERROR -------", error);
-    next(error);
   }
-});
+);
 
 /**
  * @openapi
@@ -584,26 +460,29 @@ UserServiceRoute.put("/changeUserData/:id", async (req: Request, res: Response, 
  *               error: "Internal server error"
  */
 
-UserServiceRoute.delete("/deleteUserData/:id", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = req.params.id;
+UserServiceRoute.delete(
+  "/deleteUserData/:id",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.params.id;
 
-    const user = await User.findByPk(userId);
-    if (!user) {
-      return res.status(404).json({
-        error: "User not found",
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({
+          error: "User not found",
+        });
+      }
+
+      await user.destroy();
+
+      return res.status(200).json({
+        message: "User deleted successfully",
       });
+    } catch (error) {
+      console.error("ERROR -------", error);
+      next(error);
     }
-
-    await user.destroy();
-
-    return res.status(200).json({
-      message: "User deleted successfully",
-    });
-  } catch (error) {
-    console.error("ERROR -------", error);
-    next(error);
   }
-});
+);
 
 export default UserServiceRoute;
