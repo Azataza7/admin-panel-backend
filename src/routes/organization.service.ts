@@ -2,6 +2,7 @@ import express from "express";
 import Organization from "../models/Organization.ts";
 import { createClientDatabase } from "../methods/octo_database.ts";
 import User from "../models/User.ts";
+import type { WhereOptions } from "sequelize";
 
 interface OrganizationCreate {
   name: string;
@@ -13,11 +14,15 @@ interface OrganizationCreate {
 
 const OrganizationServiceRoute = express.Router();
 
-//фильтрация по id owner
 OrganizationServiceRoute.get("/", async (req, res, next) => {
   try  {
-    const list = await Organization.findAll();
-    res.send(list);
+    const { ownerId } = req.query;
+    const where: WhereOptions<Organization> = {};
+
+    if (ownerId) where.user_id = Number(ownerId);
+
+    const organizationList = await Organization.findAll({ where });
+    res.send(organizationList);
   } catch (e) {
     next(e);
   }
