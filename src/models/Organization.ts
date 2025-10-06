@@ -14,11 +14,14 @@ export interface OrganizationAttributes {
 }
 
 export type OrganizationCreationAttributes = Optional<
-  OrganizationAttributes, "id" | "createdAt" | "updatedAt">;
+  OrganizationAttributes,
+  "id" | "createdAt" | "updatedAt"
+>;
 
 export class Organization
   extends Model<OrganizationAttributes, OrganizationCreationAttributes>
-  implements OrganizationAttributes {
+  implements OrganizationAttributes
+{
   declare id: number;
   declare user_id: number;
   declare name: string;
@@ -28,28 +31,31 @@ export class Organization
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
-Organization.init({
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+Organization.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    user_id: { type: DataTypes.INTEGER, allowNull: false },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    branches: { type: DataTypes.STRING, allowNull: false },
+    paidDate: { type: DataTypes.DATE, allowNull: false },
+    isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
   },
-  user_id:{ type: DataTypes.INTEGER, allowNull: false },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  branches: { type: DataTypes.STRING, allowNull: false, },
-  paidDate: { type: DataTypes.DATE, allowNull: false, },
-  isActive: { type: DataTypes.BOOLEAN, defaultValue: true, }
-},{
-  sequelize,
-  tableName: "organizations",
-  timestamps: true,
-});
+  {
+    sequelize,
+    tableName: "organizations",
+    timestamps: true,
+  }
+);
 
-Organization.belongsTo(User, {as: "user", foreignKey: "user_id"});
-User.hasMany(Organization, {as: "organization", foreignKey: "user_id"});
+Organization.belongsTo(User, { as: "user", foreignKey: "user_id" });
+User.hasMany(Organization, { as: "organization", foreignKey: "user_id" });
 
 export default Organization;

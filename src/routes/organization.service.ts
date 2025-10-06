@@ -15,7 +15,7 @@ interface OrganizationCreate {
 const OrganizationServiceRoute = express.Router();
 
 OrganizationServiceRoute.get("/", async (req, res, next) => {
-  try  {
+  try {
     const { ownerId } = req.query;
     const where: WhereOptions<Organization> = {};
 
@@ -30,7 +30,7 @@ OrganizationServiceRoute.get("/", async (req, res, next) => {
 
 OrganizationServiceRoute.get("/:id", async (req, res, next) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const organization = await Organization.findByPk(id);
     res.send(organization);
   } catch (e) {
@@ -40,16 +40,10 @@ OrganizationServiceRoute.get("/:id", async (req, res, next) => {
 
 OrganizationServiceRoute.post("/", async (req, res, next) => {
   try {
-    const {
-      name,
-      branches,
-      paidDate,
-      userId
-    } = req.body ;
-
+    const { name, branches, paidDate, userId } = req.body;
 
     if (!paidDate || !name || !branches || !userId) {
-      return res.status(400).send({error: "Inputs required"});
+      return res.status(400).send({ error: "Inputs required" });
     }
 
     const existingOrganization = await Organization.findOne({
@@ -59,11 +53,11 @@ OrganizationServiceRoute.post("/", async (req, res, next) => {
     const existingUser = await User.findByPk(userId);
 
     if (existingOrganization) {
-      return res.status(400).send({error: "Organization already exists"});
+      return res.status(400).send({ error: "Organization already exists" });
     }
 
     if (!existingUser) {
-      return res.status(400).send({error: "The user does not exist"});
+      return res.status(400).send({ error: "The user does not exist" });
     }
 
     const organization: OrganizationCreate = {
@@ -71,7 +65,7 @@ OrganizationServiceRoute.post("/", async (req, res, next) => {
       user_id: Number(userId),
       branches,
       paidDate: paidDate,
-      isActive: true
+      isActive: true,
     };
 
     const result = await createClientDatabase(organization);
@@ -111,7 +105,6 @@ OrganizationServiceRoute.patch("/:id", async (req, res, next) => {
     await organization.save();
 
     res.send(organization);
-
   } catch (e) {
     next(e);
   }
