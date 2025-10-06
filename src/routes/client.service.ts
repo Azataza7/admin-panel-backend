@@ -5,6 +5,9 @@ import Branch from "../models/Branch.ts";
 import Client from "../models/Client.ts";
 import Organization from "../models/Organization.ts";
 import type { Request, Response, NextFunction } from "express";
+import { authMiddleware } from "../middleware/auth.ts";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const ClientServiceRouter = express.Router();
 
@@ -36,6 +39,7 @@ ClientServiceRouter.post(
         phone_number,
         branch_id,
         source,
+        password,
         organizationId,
       } = req.body;
 
@@ -49,7 +53,6 @@ ClientServiceRouter.post(
 
       const existingBranch = await Branch.findByPk(branch_id);
       const existingOrg = await Organization.findByPk(organizationId);
-      console.log(existingOrg);
 
       if (existingClient) {
         return res.status(400).json({ message: "Client already exists" });
@@ -64,11 +67,13 @@ ClientServiceRouter.post(
       }
 
       const source_id = `${source}_${Date.now()}_${nanoid(6)}`;
+      const hashedPassword = await bcrypt.hash(password, 10);
 
       const client = await Client.create({
         first_name,
         last_name: last_name || null,
         phone_number: phone_number.trim(),
+        password: hashedPassword,
         source_id,
         is_active: true,
         organization_id: organizationId,
@@ -87,10 +92,40 @@ ClientServiceRouter.post(
         client,
       });
     } catch (e) {
+      console.log("Error: " + e);
+
       next(e);
     }
   }
 );
+
+ClientServiceRouter.post("/login", async (req: Request, res: Response) => {
+  try {
+    const { phone_number, password } = req.body;
+
+    const client = await Client.findOne({ where: { phone_number } });
+
+    if (!client) {
+      return res.status(400).json({ message: "Client not found" });
+    }
+
+    const isValid = await bcrypt.compare(password, client.password);
+
+    if (!isValid) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign(
+      { id: client.id, phone: client.phone_number },
+      process.env.JWT_SECRET!,
+      { expiresIn: "365d" }
+    );
+
+    return res.json({ message: "Login successful", token });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error" });
+  }
+});
 
 ClientServiceRouter.get(
   "/getClientBySource",
