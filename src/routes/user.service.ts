@@ -14,81 +14,6 @@ type UserAuthorization = {
   password: string;
 };
 
-/**
- * @openapi
- * /user/getUserList:
- *   get:
- *     summary: Получить список пользователей организаций
- *     tags:
- *       - User
- *     responses:
- *       200:
- *         description: Успешный ответ
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "user list"
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: integer
- *                         example: 28
- *                       email:
- *                         type: string
- *                         example: "kulik6@gmail.com"
- *                       organizationName:
- *                         type: string
- *                         example: "kulikov6"
- *                       password:
- *                         type: string
- *                         example: "wBG%RZif"
- *                       role:
- *                         type: string
- *                         example: "owner"
- *                       branches:
- *                         type: integer
- *                         example: 5
- *                       token:
- *                         type: string
- *                         example: "09e4c83d0f046891b27e0c2ee6e76181be6b48a23e72ab99357ef6914fbcb8b9"
- *                       paidDate:
- *                         type: string
- *                         format: date-time
- *                         example: "2025-09-17T15:45:00.000Z"
- *                       isActive:
- *                         type: boolean
- *                         example: true
- *                       createdAt:
- *                         type: string
- *                         format: date-time
- *                         example: "2025-09-26T08:03:07.767Z"
- *                       updatedAt:
- *                         type: string
- *                         format: date-time
- *                         example: "2025-09-26T08:03:07.767Z"
- *             example:
- *               message: "user list"
- *               data:
- *                 - id: 28
- *                   email: "kulik6@gmail.com"
- *                   organizationName: "kulikov6"
- *                   password: "wBG%RZif"
- *                   role: "owner"
- *                   branches: 5
- *                   token: "09e4c83d0f046891b27e0c2ee6e76181be6b48a23e72ab99357ef6914fbcb8b9"
- *                   paidDate: "2025-09-17T15:45:00.000Z"
- *                   isActive: true
- *                   createdAt: "2025-09-26T08:03:07.767Z"
- *                   updatedAt: "2025-09-26T08:03:07.767Z"
- */
-
 UserServiceRoute.get(
   "/getUserList",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -104,80 +29,6 @@ UserServiceRoute.get(
     }
   }
 );
-
-/**
- * @openapi
- * /user/auth:
- *   post:
- *     summary: Авторизация пользователя
- *     tags:
- *       - User
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 example: "kulik6@gmail.com"
- *               password:
- *                 type: string
- *                 example: "wBG%RZif"
- *           example:
- *             email: "kulik6@gmail.com"
- *             password: "wBG%RZif"
- *     responses:
- *       200:
- *         description: Успешный вход
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: "Success"
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                       example: 28
- *                     databaseName:
- *                       type: string
- *                       example: "kulikov6"
- *                     role:
- *                       type: string
- *                       example: "owner"
- *       401:
- *         description: Ошибка авторизации
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: "Invalid credentials"
- *       500:
- *         description: Внутренняя ошибка сервера
- *         content:
- *           application/json:
- *             example:
- *               success: false
- *               message: "Internal server error"
- */
 
 UserServiceRoute.post(
   "/auth",
@@ -252,118 +103,6 @@ UserServiceRoute.post(
   }
 );
 
-/**
- * @openapi
- * /user/changeUserData/{id}:
- *   put:
- *     summary: Обновить данные пользователя
- *     tags:
- *       - User
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID пользователя для обновления
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - organizationName
- *               - email
- *               - branches
- *             properties:
- *               organizationName:
- *                 type: string
- *                 example: "kulikov6"
- *               email:
- *                 type: string
- *                 example: "kulik6@gmail.com"
- *               branches:
- *                 type: integer
- *                 example: 5
- *               paidDate:
- *                 type: string
- *                 format: date-time
- *                 example: "2025-09-17T15:45:00.000Z"
- *               isActive:
- *                 type: boolean
- *                 example: true
- *           example:
- *             organizationName: "kulikov6"
- *             email: "kulik6@gmail.com"
- *             branches: 5
- *             paidDate: "2025-09-17T15:45:00.000Z"
- *             isActive: true
- *     responses:
- *       200:
- *         description: Данные пользователя успешно обновлены
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                       example: 28
- *                     email:
- *                       type: string
- *                       example: "kulik6@gmail.com"
- *                     organizationName:
- *                       type: string
- *                       example: "kulikov6"
- *                     branches:
- *                       type: integer
- *                       example: 5
- *                     isActive:
- *                       type: boolean
- *                       example: true
- *                     paidDate:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-09-17T15:45:00.000Z"
- *                     createdAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-09-26T08:03:07.767Z"
- *                     updatedAt:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-09-26T09:15:11.120Z"
- *       404:
- *         description: Пользователь не найден
- *         content:
- *           application/json:
- *             example:
- *               error: "User not found"
- *       422:
- *         description: Ошибка валидации или занятое имя организации
- *         content:
- *           application/json:
- *             examples:
- *               missingFields:
- *                 summary: Обязательные поля не указаны
- *                 value:
- *                   error: "Inputs required"
- *               duplicateOrgName:
- *                 summary: Имя организации занято другим пользователем
- *                 value:
- *                   error: "Organization name already taken"
- *       500:
- *         description: Внутренняя ошибка сервера
- *         content:
- *           application/json:
- *             example:
- *               error: "Internal server error"
- */
-
 //можно менять пароль и убрать email isActive
 
 interface UserToChange extends UserToCreate {
@@ -425,41 +164,6 @@ UserServiceRoute.put(
   }
 );
 
-/**
- * @openapi
- * /user/deleteUserData/{id}:
- *   delete:
- *     summary: Удалить пользователя по ID
- *     tags:
- *       - User
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID пользователя для удаления
- *     responses:
- *       200:
- *         description: Пользователь успешно удалён
- *         content:
- *           application/json:
- *             example:
- *               message: "User deleted successfully"
- *       404:
- *         description: Пользователь не найден
- *         content:
- *           application/json:
- *             example:
- *               error: "User not found"
- *       500:
- *         description: Внутренняя ошибка сервера
- *         content:
- *           application/json:
- *             example:
- *               error: "Internal server error"
- */
-
 UserServiceRoute.delete(
   "/deleteUserData/:id",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -486,3 +190,166 @@ UserServiceRoute.delete(
 );
 
 export default UserServiceRoute;
+
+/**
+ * @swagger
+ * tags:
+ *   name: User
+ *   description: Работа с пользователями организации
+ */
+
+/**
+ * @swagger
+ * /user/getUserList:
+ *   get:
+ *     summary: Получить список пользователей организаций
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: Успешный ответ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *
+ * /user/auth:
+ *   post:
+ *     summary: Авторизация пользователя
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Успешный вход
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Неверные данные авторизации
+ *       500:
+ *         description: Внутренняя ошибка сервера
+ *
+ * /user/changeUserData/{id}:
+ *   put:
+ *     summary: Обновить данные пользователя
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID пользователя
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               first_name:
+ *                 type: string
+ *               last_name:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               branches:
+ *                 type: integer
+ *               paidDate:
+ *                 type: string
+ *                 format: date-time
+ *               isActive:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Данные пользователя обновлены
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Пользователь не найден
+ *       422:
+ *         description: Ошибка валидации
+ *       500:
+ *         description: Внутренняя ошибка сервера
+ *
+ * /user/deleteUserData/{id}:
+ *   delete:
+ *     summary: Удалить пользователя по ID
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID пользователя
+ *     responses:
+ *       200:
+ *         description: Пользователь удалён
+ *       404:
+ *         description: Пользователь не найден
+ *       500:
+ *         description: Внутренняя ошибка сервера
+ *
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         first_name:
+ *           type: string
+ *         last_name:
+ *           type: string
+ *         email:
+ *           type: string
+ *         role:
+ *           type: string
+ *         branches:
+ *           type: integer
+ *         paidDate:
+ *           type: string
+ *           format: date-time
+ *         isActive:
+ *           type: boolean
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ */

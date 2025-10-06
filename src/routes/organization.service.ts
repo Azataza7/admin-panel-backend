@@ -111,3 +111,153 @@ OrganizationServiceRoute.patch("/:id", async (req, res, next) => {
 });
 
 export default OrganizationServiceRoute;
+
+/**
+ * @swagger
+ * tags:
+ *   name: Organizations
+ *   description: Работа с организациями
+ */
+
+/**
+ * @swagger
+ * /api/organizations/:
+ *   get:
+ *     summary: Получить список организаций, можно фильтровать по ownerId
+ *     tags: [Organizations]
+ *     parameters:
+ *       - in: query
+ *         name: ownerId
+ *         schema:
+ *           type: integer
+ *         description: ID владельца организации
+ *     responses:
+ *       200:
+ *         description: Список организаций
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Organization'
+ *
+ *   post:
+ *     summary: Создать новую организацию
+ *     tags: [Organizations]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - branches
+ *               - paidDate
+ *               - userId
+ *             properties:
+ *               name:
+ *                 type: string
+ *               branches:
+ *                 type: integer
+ *               paidDate:
+ *                 type: string
+ *                 format: date
+ *               userId:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: Организация успешно создана
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 newOrganization:
+ *                   $ref: '#/components/schemas/Organization'
+ *       400:
+ *         description: Ошибка валидации
+ *       500:
+ *         description: Проблема с базой данных
+ */
+
+/**
+ * @swagger
+ * /api/organizations/{id}:
+ *   get:
+ *     summary: Получить организацию по ID
+ *     tags: [Organizations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Информация об организации
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Organization'
+ *       404:
+ *         description: Организация не найдена
+ *
+ *   patch:
+ *     summary: Обновить организацию по ID
+ *     tags: [Organizations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               branches:
+ *                 type: integer
+ *               paidDate:
+ *                 type: string
+ *                 format: date
+ *               isActive:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Организация обновлена
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Organization'
+ *       404:
+ *         description: Организация не найдена
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Organization:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         user_id:
+ *           type: integer
+ *         branches:
+ *           type: integer
+ *         paidDate:
+ *           type: string
+ *           format: date
+ *         isActive:
+ *           type: boolean
+ */
+

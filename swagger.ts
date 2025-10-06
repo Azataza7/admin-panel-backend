@@ -1,6 +1,7 @@
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { type Express } from "express";
+import YAML from "yamljs";
 import path from "path";
 
 const options = {

@@ -253,3 +253,292 @@ ClientServiceRouter.patch(
 );
 
 export default ClientServiceRouter;
+
+/**
+ * @swagger
+ * tags:
+ *   name: Clients
+ *   description: Работа с клиентами и их активностью
+ */
+
+/**
+ * @swagger
+ * /api/clients/:
+ *   get:
+ *     summary: Получить всех клиентов и их активность
+ *     tags: [Clients]
+ *     responses:
+ *       200:
+ *         description: Успешный ответ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 clients:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Client'
+ *                 clientsActivity:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/ClientActivity'
+ *
+ *   post:
+ *     summary: Добавить клиента и создать его активность
+ *     tags: [Clients]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - first_name
+ *               - phone_number
+ *               - branch_id
+ *               - password
+ *               - organizationId
+ *             properties:
+ *               first_name:
+ *                 type: string
+ *               last_name:
+ *                 type: string
+ *               phone_number:
+ *                 type: string
+ *               branch_id:
+ *                 type: integer
+ *               source:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               organizationId:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Клиент успешно добавлен
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 client:
+ *                   $ref: '#/components/schemas/Client'
+ */
+
+/**
+ * @swagger
+ * /api/clients/login:
+ *   post:
+ *     summary: Логин клиента
+ *     tags: [Clients]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - phone_number
+ *               - password
+ *             properties:
+ *               phone_number:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Успешный вход
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ */
+
+/**
+ * @swagger
+ * /api/clients/getClientBySource:
+ *   get:
+ *     summary: Получить клиентов по source_id
+ *     tags: [Clients]
+ *     parameters:
+ *       - in: header
+ *         name: source_id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Успешно
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Client'
+ */
+
+/**
+ * @swagger
+ * /api/clients/{id}/activate:
+ *   patch:
+ *     summary: Активация или деактивация клиента
+ *     tags: [Clients]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               is_active:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Статус клиента обновлен
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+
+/**
+ * @swagger
+ * /api/clients/{id}/last-activity:
+ *   patch:
+ *     summary: Обновление или создание активности клиента
+ *     tags: [Clients]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - branch_id
+ *               - service_id
+ *             properties:
+ *               branch_id:
+ *                 type: integer
+ *               service_id:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Активность клиента обновлена
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+
+/**
+ * @swagger
+ * /api/clients/{id}:
+ *   patch:
+ *     summary: Обновление информации клиента
+ *     tags: [Clients]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               first_name:
+ *                 type: string
+ *               last_name:
+ *                 type: string
+ *               custom_name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Клиент обновлен
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 client:
+ *                   $ref: '#/components/schemas/Client'
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Client:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         first_name:
+ *           type: string
+ *         last_name:
+ *           type: string
+ *         custom_name:
+ *           type: string
+ *         phone_number:
+ *           type: string
+ *         password:
+ *           type: string
+ *         source_id:
+ *           type: string
+ *         is_active:
+ *           type: boolean
+ *         organization_id:
+ *           type: integer
+ *
+ *     ClientActivity:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         client_id:
+ *           type: integer
+ *         branch_id:
+ *           type: integer
+ *         service_id:
+ *           type: integer
+ *         last_active_at:
+ *           type: string
+ *           format: date-time
+ */
+
