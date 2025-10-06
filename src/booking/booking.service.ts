@@ -102,3 +102,126 @@ BookingRoute.get(
 );
 
 export default BookingRoute;
+
+/**
+ * @swagger
+ * tags:
+ *   name: Booking
+ *   description: Работа с организациями и их филиалами
+ */
+
+/**
+ * @swagger
+ * /booking/getOrganizations:
+ *   get:
+ *     summary: Получить список всех организаций с филиалами
+ *     tags: [Booking]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Список организаций с их филиалами
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "success"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/OrganizationWithBranches'
+ *       401:
+ *         description: Неавторизованный доступ
+ *       500:
+ *         description: Внутренняя ошибка сервера
+ *
+ * /booking/getOrganizations/{id}:
+ *   get:
+ *     summary: Получить организацию по ID с филиалами и сервисами
+ *     tags: [Booking]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID организации
+ *     responses:
+ *       200:
+ *         description: Организация с филиалами и привязанными сервисами
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 organization:
+ *                   $ref: '#/components/schemas/OrganizationWithBranches'
+ *       401:
+ *         description: Неавторизованный доступ
+ *       404:
+ *         description: Организация с указанным ID не найдена
+ *       500:
+ *         description: Внутренняя ошибка сервера
+ *
+ * components:
+ *   schemas:
+ *     BranchWithServices:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         phone:
+ *           type: string
+ *         address:
+ *           type: string
+ *         isActive:
+ *           type: boolean
+ *         services:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *               name:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               branch_id:
+ *                 type: integer
+ *
+ *     OrganizationWithBranches:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         user_id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         branches:
+ *           type: integer
+ *         paidDate:
+ *           type: string
+ *           format: date-time
+ *         isActive:
+ *           type: boolean
+ *         organizationBranches:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/BranchWithServices'
+ *
+ * securitySchemes:
+ *   bearerAuth:
+ *     type: http
+ *     scheme: bearer
+ *     bearerFormat: JWT
+ */
+
