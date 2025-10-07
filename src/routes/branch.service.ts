@@ -24,10 +24,10 @@ BranchServiceRoute.get("/", async (req, res, next) => {
 
 BranchServiceRoute.get("/:id", async (req, res, next) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const branch = await Branch.findByPk(id);
     if (!branch) {
-      return res.status(404).send({error: "Branch not found"})
+      return res.status(404).send({ error: "Branch not found" });
     }
 
     return res.send(branch);
@@ -38,41 +38,40 @@ BranchServiceRoute.get("/:id", async (req, res, next) => {
 
 BranchServiceRoute.post("/", async (req, res, next) => {
   try {
-    const {
-      organizationId,
-      name,
-      phone,
-      address,
-    } = req.body;
+    const { organizationId, name, phone, address } = req.body;
 
     if (!organizationId || !name || !phone || !address) {
-      return res.status(400).send({error: " owner_id, name, phone and address are required"})
+      return res
+        .status(400)
+        .send({ error: " owner_id, name, phone and address are required" });
     }
 
     const organization = await Organization.findByPk(organizationId);
 
     if (!organization) {
-      return res.status(400).send({error: "Organization not found"})
+      return res.status(400).send({ error: "Organization not found" });
     }
     if ((organization.branches ?? 0) <= 0) {
       return res.status(400).send({ error: "User cannot have more branches" });
     }
 
     const currentBranches = await Branch.count({
-      where: { organization_id: organizationId }
+      where: { organization_id: organizationId },
     });
 
     if (currentBranches >= organization.branches) {
-      return res.status(400).send({ error: `User can have only ${organization.branches} branches` });
+      return res
+        .status(400)
+        .send({ error: `User can have only ${organization.branches} branches` });
     }
 
     const newBranch = await Branch.create({
       organization_id: organizationId,
       name,
       phone,
-      address
+      address,
     });
-    return res.send({message: "Branch created successfully.", newBranch});
+    return res.send({ message: "Branch created successfully.", newBranch });
   } catch (e) {
     next(e);
   }
@@ -95,7 +94,6 @@ BranchServiceRoute.patch("/:id", async (req, res, next) => {
     await branch.save();
 
     return res.send({ message: "Branch updated successfully", branch });
-
   } catch (e) {
     next(e);
   }
@@ -111,13 +109,12 @@ BranchServiceRoute.patch("/:id/deactivate", async (req, res, next) => {
     }
 
     if (!branch.isActive) {
-      return res.status(401).send({message: "Permission denied"})
+      return res.status(401).send({ message: "Permission denied" });
     }
 
     branch.isActive = false;
     await branch.save();
     return res.send({ message: `You have deactivated the branch: ${branch.name}` });
-
   } catch (e) {
     next(e);
   }

@@ -6,20 +6,19 @@ export interface UserToCreate {
 } // toCreateOwnerUser
 
 interface Service {
-  id: number,
-  branch_id: number,
-  name: string,
-  default_duration: number,
-  prices: { price: number; duration: number }[],
-  description: string | null,
-  category: string | null,
-  age_restriction: string | null,
-  recommendations: string | null,
-  group: string | null,
-  createdAt: string,
-  updatedAt: string
+  id: number;
+  branch_id: number;
+  name: string;
+  default_duration: number;
+  prices: { price: number; duration: number }[];
+  description: string | null;
+  category: string | null;
+  age_restriction: string | null;
+  recommendations: string | null;
+  group: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
-
 
 export interface OrganizationWithBranchesServices {
   id: number;
@@ -30,6 +29,6 @@ export interface OrganizationWithBranchesServices {
     phone: string;
     address: string;
     isActive: boolean;
-    services: Service
+    services: Service;
   }[];
 }

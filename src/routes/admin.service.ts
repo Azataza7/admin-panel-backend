@@ -189,7 +189,7 @@ AdminServiceRoute.post(
         last_name,
         password: hashedPassword,
         isActive: isActive,
-        role: "owner"
+        role: "owner",
       });
 
       return res.send({ message: "New user added", user, password });

@@ -5,7 +5,6 @@ import Branch from "../models/Branch.ts";
 import Client from "../models/Client.ts";
 import Organization from "../models/Organization.ts";
 import type { Request, Response, NextFunction } from "express";
-import { authMiddleware } from "../middleware/auth.ts";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -541,4 +540,3 @@ export default ClientServiceRouter;
  *           type: string
  *           format: date-time
  */
-
