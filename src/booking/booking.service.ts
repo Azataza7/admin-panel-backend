@@ -49,7 +49,7 @@ BookingRoute.get(
   authMiddleware,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const organization = await Organization.findByPk(req.params.id, {
+      const organization = (await Organization.findByPk(req.params.id, {
         include: [
           {
             model: Branch,
@@ -57,7 +57,7 @@ BookingRoute.get(
             attributes: ["id", "name", "phone", "address", "isActive"], // какие поля нужны
           },
         ],
-      }) as unknown as OrganizationWithBranches | null;
+      })) as unknown as OrganizationWithBranches | null;
 
       if (!organization) {
         return res.status(404).send({ message: "No organization with this id" });
@@ -72,7 +72,7 @@ BookingRoute.get(
       const servicesResponse = await axios.get(
         "https://lesser-felicdad-promconsulting-79f07228.koyeb.app/services",
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}`, admin_panel: true },
         }
       );
 
@@ -224,4 +224,3 @@ export default BookingRoute;
  *     scheme: bearer
  *     bearerFormat: JWT
  */
-

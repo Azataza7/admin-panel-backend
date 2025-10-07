@@ -104,10 +104,10 @@ authorizationService.post(
         },
       } as AuthResponse);
     } catch (e) {
-      console.error('Login error:', e);
+      console.error("Login error:", e);
       return res.status(500).json({
         success: false,
-        message: "Internal server error"
+        message: "Internal server error",
       } as AuthResponse);
     }
   }

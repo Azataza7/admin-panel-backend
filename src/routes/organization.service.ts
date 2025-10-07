@@ -260,4 +260,3 @@ export default OrganizationServiceRoute;
  *         isActive:
  *           type: boolean
  */
-
