@@ -101,6 +101,29 @@ BookingRoute.get(
   }
 );
 
+BookingRoute.post(
+  "/",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {
+        client, // объект
+        parentServiceId,
+        service, // объект
+        startTime,
+        managerId, // может быть стоит передавать не через body
+        employeeId,
+        notes,
+        source,
+        assignmentDate,
+        discount,
+        timezone,
+      } = req.body;
+    } catch (e) {
+
+    }
+  }
+);
+
 export default BookingRoute;
 
 /**

@@ -121,7 +121,7 @@ export default OrganizationServiceRoute;
 
 /**
  * @swagger
- * /api/organizations/:
+ * /organizations/:
  *   get:
  *     summary: Получить список организаций, можно фильтровать по ownerId
  *     tags: [Organizations]
@@ -183,7 +183,7 @@ export default OrganizationServiceRoute;
 
 /**
  * @swagger
- * /api/organizations/{id}:
+ * /organizations/{id}:
  *   get:
  *     summary: Получить организацию по ID
  *     tags: [Organizations]

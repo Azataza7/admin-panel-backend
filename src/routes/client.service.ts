@@ -262,7 +262,7 @@ export default ClientServiceRouter;
 
 /**
  * @swagger
- * /api/clients/:
+ * /clients/:
  *   get:
  *     summary: Получить всех клиентов и их активность
  *     tags: [Clients]
@@ -329,7 +329,7 @@ export default ClientServiceRouter;
 
 /**
  * @swagger
- * /api/clients/login:
+ * /clients/login:
  *   post:
  *     summary: Логин клиента
  *     tags: [Clients]
@@ -363,7 +363,7 @@ export default ClientServiceRouter;
 
 /**
  * @swagger
- * /api/clients/getClientBySource:
+ * /clients/getClientBySource:
  *   get:
  *     summary: Получить клиентов по source_id
  *     tags: [Clients]
@@ -391,7 +391,7 @@ export default ClientServiceRouter;
 
 /**
  * @swagger
- * /api/clients/{id}/activate:
+ * /clients/{id}/activate:
  *   patch:
  *     summary: Активация или деактивация клиента
  *     tags: [Clients]
@@ -424,7 +424,7 @@ export default ClientServiceRouter;
 
 /**
  * @swagger
- * /api/clients/{id}/last-activity:
+ * /clients/{id}/last-activity:
  *   patch:
  *     summary: Обновление или создание активности клиента
  *     tags: [Clients]
@@ -462,7 +462,7 @@ export default ClientServiceRouter;
 
 /**
  * @swagger
- * /api/clients/{id}:
+ * /clients/{id}:
  *   patch:
  *     summary: Обновление информации клиента
  *     tags: [Clients]
