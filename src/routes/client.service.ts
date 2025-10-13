@@ -75,7 +75,6 @@ ClientServiceRouter.post(
         password: hashedPassword,
         source_id,
         is_active: true,
-        organization_id: organizationId,
       });
 
       const clientActivity = await ClientActivity.create({
@@ -311,8 +310,6 @@ export default ClientServiceRouter;
  *                 type: string
  *               password:
  *                 type: string
- *               organizationId:
- *                 type: integer
  *     responses:
  *       200:
  *         description: Клиент успешно добавлен

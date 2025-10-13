@@ -32,3 +32,22 @@ export interface OrganizationWithBranchesServices {
     services: Service;
   }[];
 }
+
+export interface Employee {
+  first_name: string;
+  last_name?: string | null;
+  role: "manager" | "employee";
+}
+
+export interface ServiceInfo {
+  id?: number;
+  name: string;
+  price: number;
+  duration: number;
+}
+
+export interface ClientInfo {
+  first_name: string;
+  last_name?: string | null;
+  phone: string;
+}

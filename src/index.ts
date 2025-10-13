@@ -11,6 +11,7 @@ import { setupSwagger } from "../swagger.ts";
 import ClientServiceRouter from "./routes/client.service.ts";
 import OrganizationServiceRoute from "./routes/organization.service.ts";
 import BookingRoute from "./booking/booking.service.ts";
+import AssignmentsServiceRoute from "./routes/assignment.service.ts";
 
 config();
 
@@ -31,6 +32,7 @@ app.use("/user", UserServiceRoute);
 app.use("/branches", BranchServiceRoute);
 app.use("/clients", ClientServiceRouter);
 app.use("/organization", OrganizationServiceRoute);
+app.use("/assignments", AssignmentsServiceRoute);
 
 //superadmin routes
 app.use("/admin", AdminServiceRoute);
