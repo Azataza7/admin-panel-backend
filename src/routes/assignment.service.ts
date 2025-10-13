@@ -6,6 +6,7 @@ const AssignmentsServiceRoute = express.Router();
 AssignmentsServiceRoute.get("/", (req, res, next) => {
   try {
     const assignment = Assignment.findAll();
+    res.send(assignment);
   } catch (e) {
     console.log(e);
     next(e);
@@ -28,19 +29,36 @@ AssignmentsServiceRoute.get("/:id", (req, res, next) => {
   }
 });
 
-AssignmentsServiceRoute.post("/client-create", (req, res, next) => {
-  try {
-
-  } catch (e) {
-    console.log(e);
-  }
-});
+// AssignmentsServiceRoute.post("/client-create", async (req, res, next) => {
+//   try {
+//     const {
+//       client,
+//       additionalServices,
+//       service,
+//       startTime,
+//       employeeId,
+//       notes,
+//       source,
+//       assignmentDate,
+//       discount,
+//       timezone,
+//     } = req.body;
+//
+//     await axios.post("/api/assignments", )
+//   } catch (e) {
+//     console.log(e);
+//   }
+// });
 
 AssignmentsServiceRoute.post("/calendar", async (req, res, next) => {
   try {
     const {
       clientAssignment
     } = req.body;
+
+    if (!clientAssignment) {
+      res.status(404).send({ error: "No data available to create assignment" });
+    }
 
     const assignment = await Assignment.create({
       id: clientAssignment.id,
@@ -73,6 +91,31 @@ AssignmentsServiceRoute.post("/calendar", async (req, res, next) => {
       payment_method: clientAssignment.payment_method || null,
       paid: clientAssignment.paid || "unpaid",
     });
+    res.send(assignment);
+  } catch (e) {
+    console.log(e);
+    next(e);
+  }
+});
+
+AssignmentsServiceRoute.put("/calendar/:id", async (req, res, next) => {
+  try {
+    const {
+      clientAssignment
+    } = req.body;
+
+    const { id } = req.params;
+    const assignment = await Assignment.findByPk(id);
+    if ( !assignment ) {
+      return res.status(404).send({error: "No Assignment found with this id"});
+    }
+
+    if (!clientAssignment) {
+      res.status(404).send({error: "No data available to create assignment"});
+    }
+
+    await assignment.update(clientAssignment);
+
     res.send(assignment);
   } catch (e) {
     console.log(e);

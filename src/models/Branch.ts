@@ -11,6 +11,7 @@ export interface BranchAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   isActive: boolean;
+  timezone: string;
 }
 
 export type BranchCreationAttributes = Optional<BranchAttributes,
@@ -25,6 +26,7 @@ export class Branch extends
   declare phone: string;
   declare address: string;
   declare isActive: boolean;
+  declare timezone: string;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
@@ -35,26 +37,12 @@ Branch.init({
       autoIncrement: true,
       primaryKey: true,
     },
-    organization_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    phone: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    address: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
-    }
+    organization_id: { type: DataTypes.INTEGER, allowNull: false },
+    name: { type: DataTypes.STRING, allowNull: false },
+    phone: { type: DataTypes.STRING, allowNull: false },
+    address: { type: DataTypes.TEXT, allowNull: false },
+    isActive: { type: DataTypes.BOOLEAN, defaultValue: true },
+    timezone: { type: DataTypes.STRING, allowNull: false, defaultValue: "Asia/Bishkek" },
   },
   {
     sequelize,
