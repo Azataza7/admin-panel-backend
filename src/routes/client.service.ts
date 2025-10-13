@@ -75,7 +75,7 @@ ClientServiceRouter.post(
         password: hashedPassword,
         source_id,
         is_active: true,
-        organization_id: organizationId,
+        // organization_id: organizationId,
       });
 
       const clientActivity = await ClientActivity.create({
