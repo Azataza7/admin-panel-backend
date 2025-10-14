@@ -31,7 +31,7 @@ app.use(express.json());
 app.use("/user", UserServiceRoute);
 app.use("/branches", BranchServiceRoute);
 app.use("/clients", ClientServiceRouter);
-app.use("/organization", OrganizationServiceRoute);
+app.use("/organizations", OrganizationServiceRoute);
 app.use("/assignments", AssignmentsServiceRoute);
 
 //superadmin routes
