@@ -32,15 +32,16 @@ BranchServiceRoute.get("/:id", async (req, res, next) => {
 
     return res.send(branch);
   } catch (e) {
+    console.log("error: ------------------------------------------------------------------", e);
     next(e);
   }
 });
 
 BranchServiceRoute.post("/", async (req, res, next) => {
   try {
-    const { organizationId, name, phone, address } = req.body;
+    const { organizationId, name, phone, address, timezone } = req.body;
 
-    if (!organizationId || !name || !phone || !address) {
+    if (!organizationId || !name || !phone || !address || !timezone) {
       return res
         .status(400)
         .send({ error: " owner_id, name, phone and address are required" });
@@ -70,6 +71,7 @@ BranchServiceRoute.post("/", async (req, res, next) => {
       name,
       phone,
       address,
+      timezone,
     });
     return res.send({ message: "Branch created successfully.", newBranch });
   } catch (e) {
@@ -198,6 +200,7 @@ export default BranchServiceRoute;
  *             name: "New Branch"
  *             phone: "+777777777"
  *             address: "ул. Победы, 10"
+ *             timezone: "Asia/Bishkek"
  *     responses:
  *       200:
  *         description: Branch created
@@ -211,6 +214,7 @@ export default BranchServiceRoute;
  *                 name: "New Branch"
  *                 phone: "+777777777"
  *                 address: "ул. Победы, 10"
+ *                 timezone: "Asia/Bishkek"
  *       400:
  *         description: Ошибка валидации
  */

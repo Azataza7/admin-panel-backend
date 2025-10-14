@@ -66,7 +66,7 @@ AssignmentsServiceRoute.post("/calendar", async (req, res, next) => {
       branch_id: clientAssignment.branch_id,
       organization_id: clientAssignment.organization_id,
       client_id: clientAssignment.client_id,
-      client: clientAssignment.client,
+      client_snapshot: clientAssignment.client_snapshot,
       service_id: clientAssignment.service_id,
       service_snapshot: clientAssignment.service_snapshot,
       assignment_date: clientAssignment.assignment_date,

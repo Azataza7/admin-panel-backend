@@ -9,12 +9,12 @@ export const ASSIGMENT_PAID = ["paid", "unpaid", "refund"];
 export type AssignmentPaid = typeof ASSIGMENT_PAID[number];
 
 export interface AssignmentAttributes {
-  id: number;
+  id: string;
   chat_id?: string | null;
   branch_id: number;
   organization_id: number;
   client_id: number;
-  client: ClientInfo;
+  client_snapshot: ClientInfo;
   service_id: number;
   service_snapshot: ServiceInfo;
   assignment_date: Date;
@@ -40,7 +40,6 @@ export interface AssignmentAttributes {
 
 export type AssignmentCreationAttributes = Optional<
   AssignmentAttributes,
-  "id"
   | "createdAt"
   | "manager_id"
   | "manager_snapshot"
@@ -57,12 +56,12 @@ export class Assignment
   extends Model<AssignmentAttributes, AssignmentCreationAttributes>
   implements AssignmentAttributes
 {
-  declare id: number;
+  declare id: string;
   declare chat_id: string | null;
   declare branch_id: number;
   declare organization_id: number;
   declare client_id: number;
-  declare client: ClientInfo;
+  declare client_snapshot: ClientInfo;
   declare manager_id: number | null;
   declare manager_snapshot: Employee | null;
   declare employee_id: number;
@@ -89,7 +88,7 @@ export class Assignment
 Assignment.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.TEXT,
       primaryKey: true,
     },
     organization_id: { type: DataTypes.INTEGER, allowNull: false },
@@ -102,7 +101,7 @@ Assignment.init(
     manager_snapshot: { type: DataTypes.JSONB, allowNull: true },
     employee_snapshot: { type: DataTypes.JSONB, allowNull: true },
     service_snapshot: { type: DataTypes.JSONB, allowNull: false },
-    client: {type: DataTypes.JSONB, allowNull: false },
+    client_snapshot: {type: DataTypes.JSONB, allowNull: false },
     assignment_date: { type: DataTypes.DATE, allowNull: false },
     start_time: { type: DataTypes.STRING, allowNull: false },
     end_time: { type: DataTypes.STRING, allowNull: false },
