@@ -32,6 +32,11 @@ OrganizationServiceRoute.get("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
     const organization = await Organization.findByPk(id);
+
+    if (!organization) {
+      return res.status(404).send({error: "Organization not found"});
+    }
+
     res.send(organization);
   } catch (e) {
     next(e);
