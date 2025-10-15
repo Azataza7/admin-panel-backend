@@ -29,27 +29,6 @@ AssignmentsServiceRoute.get("/:id", (req, res, next) => {
   }
 });
 
-// AssignmentsServiceRoute.post("/client-create", async (req, res, next) => {
-//   try {
-//     const {
-//       client,
-//       additionalServices,
-//       service,
-//       startTime,
-//       employeeId,
-//       notes,
-//       source,
-//       assignmentDate,
-//       discount,
-//       timezone,
-//     } = req.body;
-//
-//     await axios.post("/api/assignments", )
-//   } catch (e) {
-//     console.log(e);
-//   }
-// });
-
 AssignmentsServiceRoute.post("/calendar", async (req, res, next) => {
   try {
     const {
@@ -122,5 +101,256 @@ AssignmentsServiceRoute.put("/calendar/:id", async (req, res, next) => {
     next(e);
   }
 });
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     UserInfo:
+ *       type: object
+ *       properties:
+ *         first_name:
+ *           type: string
+ *           example: "Jane"
+ *         last_name:
+ *           type: string
+ *           example: "Doe"
+ *           nullable: true
+ *         role:
+ *           type: string
+ *           example: "employee"
+ *
+ *     ClientInfo:
+ *       type: object
+ *       properties:
+ *         first_name:
+ *           type: string
+ *           example: "John"
+ *         last_name:
+ *           type: string
+ *           example: "Smith"
+ *           nullable: true
+ *         phone:
+ *           type: string
+ *           example: "+123456789"
+ *
+ *     ServiceInfo:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         name:
+ *           type: string
+ *           example: "Haircut"
+ *         price:
+ *           type: number
+ *           example: 50
+ *         duration:
+ *           type: number
+ *           example: 60
+ *
+ *     Assignment:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "a1b2c3d4"
+ *         chat_id:
+ *           type: string
+ *           example: "chat123"
+ *           nullable: true
+ *         branch_id:
+ *           type: integer
+ *           example: 2
+ *         organization_id:
+ *           type: integer
+ *           example: 1
+ *         client_id:
+ *           type: integer
+ *           example: 10
+ *         client_snapshot:
+ *           $ref: '#/components/schemas/ClientInfo'
+ *         service_id:
+ *           type: integer
+ *           example: 1
+ *         service_snapshot:
+ *           $ref: '#/components/schemas/ServiceInfo'
+ *         assignment_date:
+ *           type: string
+ *           format: date
+ *           example: "2025-10-15"
+ *         start_time:
+ *           type: string
+ *           example: "10:00"
+ *         end_time:
+ *           type: string
+ *           example: "11:00"
+ *         manager_id:
+ *           type: integer
+ *           example: 3
+ *           nullable: true
+ *         manager_snapshot:
+ *           $ref: '#/components/schemas/UserInfo'
+ *           nullable: true
+ *         employee_id:
+ *           type: integer
+ *           example: 5
+ *         employee_snapshot:
+ *           $ref: '#/components/schemas/UserInfo'
+ *         timezone:
+ *           type: string
+ *           example: "Asia/Bishkek"
+ *         status:
+ *           type: string
+ *           enum: [new, scheduled, completed, canceled]
+ *           example: "new"
+ *         additional_services:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/ServiceInfo'
+ *           nullable: true
+ *         notes:
+ *           type: string
+ *           example: "Client requested extra service"
+ *           nullable: true
+ *         source:
+ *           type: string
+ *           example: "web_booking"
+ *         discount:
+ *           type: number
+ *           example: 10
+ *           nullable: true
+ *         final_price:
+ *           type: number
+ *           example: 90
+ *         total_duration:
+ *           type: number
+ *           example: 60
+ *         payment_method:
+ *           type: string
+ *           example: "cash"
+ *           nullable: true
+ *         paid:
+ *           type: string
+ *           enum: [paid, unpaid, refund]
+ *           example: "unpaid"
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-10-15T10:00:00Z"
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-10-15T10:00:00Z"
+ *
+ * /assignments:
+ *   get:
+ *     summary: Get all assignments
+ *     tags:
+ *       - Assignments
+ *     responses:
+ *       200:
+ *         description: List of assignments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Assignment'
+ *       500:
+ *         description: Server error
+ *
+ * /assignments/{id}:
+ *   get:
+ *     summary: Get assignment by ID
+ *     tags:
+ *       - Assignments
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "a1b2c3d4"
+ *     responses:
+ *       200:
+ *         description: Assignment found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Assignment'
+ *       404:
+ *         description: Assignment not found
+ *         content:
+ *           application/json:
+ *             example: { "error": "No Assignment found with this id" }
+ *       500:
+ *         description: Server error
+ *
+ * /assignments/calendar:
+ *   post:
+ *     summary: Create a new assignment
+ *     tags:
+ *       - Assignments
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - clientAssignment
+ *             properties:
+ *               clientAssignment:
+ *                 $ref: '#/components/schemas/Assignment'
+ *     responses:
+ *       200:
+ *         description: Assignment created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Assignment'
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Server error
+ *
+ * /assignments/calendar/{id}:
+ *   put:
+ *     summary: Update an existing assignment
+ *     tags:
+ *       - Assignments
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "a1b2c3d4"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - clientAssignment
+ *             properties:
+ *               clientAssignment:
+ *                 $ref: '#/components/schemas/Assignment'
+ *     responses:
+ *       200:
+ *         description: Assignment updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Assignment'
+ *       404:
+ *         description: Assignment not found
+ *       500:
+ *         description: Server error
+ */
+
 
 export default  AssignmentsServiceRoute;

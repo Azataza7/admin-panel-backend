@@ -144,15 +144,17 @@ export default BranchServiceRoute;
  *           application/json:
  *             example:
  *               - id: 1
- *                 owner_id: 2
+ *                 organization_id: 2
  *                 name: "Main Office"
  *                 phone: "+123456789"
  *                 address: "ул. Ленина, 1"
+ *                 timezone: "Asia/Bishkek"
  *               - id: 2
- *                 owner_id: 2
+ *                 organization_id: 2
  *                 name: "Branch 2"
  *                 phone: "+987654321"
  *                 address: "ул. Советская, 5"
+ *                 timezone: "Asia/Bishkek"
  */
 
 /**
@@ -176,10 +178,11 @@ export default BranchServiceRoute;
  *           application/json:
  *             example:
  *               id: 1
- *               owner_id: 2
+ *               organization_id: 2
  *               name: "Main Office"
  *               phone: "+123456789"
  *               address: "ул. Ленина, 1"
+ *               timezone: "Asia/Bishkek"
  *       404:
  *         description: Branch not found
  */
@@ -196,7 +199,7 @@ export default BranchServiceRoute;
  *       content:
  *         application/json:
  *           example:
- *             owner_id: 2
+ *             organizationId: 2
  *             name: "New Branch"
  *             phone: "+777777777"
  *             address: "ул. Победы, 10"
@@ -210,7 +213,7 @@ export default BranchServiceRoute;
  *               message: "Branch created successfully."
  *               newBranch:
  *                 id: 3
- *                 owner_id: 2
+ *                 organization_id: 2
  *                 name: "New Branch"
  *                 phone: "+777777777"
  *                 address: "ул. Победы, 10"
@@ -241,19 +244,48 @@ export default BranchServiceRoute;
  *             name: "Updated Branch"
  *             phone: "+111111111"
  *             address: "ул. Гагарина, 25"
+ *             timezone: "Asia/Bishkek"
  *     responses:
  *       200:
- *         description: Branch updated
+ *         description: Branch обновлён
  *         content:
  *           application/json:
  *             example:
  *               message: "Branch updated successfully"
  *               branch:
  *                 id: 1
- *                 owner_id: 2
+ *                 organization_id: 2
  *                 name: "Updated Branch"
  *                 phone: "+111111111"
  *                 address: "ул. Гагарина, 25"
+ *                 timezone: "Asia/Bishkek"
  *       404:
  *         description: Branch not found
+ */
+
+/**
+ * @openapi
+ * /branches/{id}/deactivate:
+ *   patch:
+ *     summary: Деактивировать филиал
+ *     tags:
+ *       - Branch
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID филиала
+ *     responses:
+ *       200:
+ *         description: Филиал деактивирован
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "You have deactivated the branch: Main Office"
+ *       404:
+ *         description: Branch not found
+ *       401:
+ *         description: Permission denied
  */
