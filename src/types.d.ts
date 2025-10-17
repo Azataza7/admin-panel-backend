@@ -51,3 +51,8 @@ export interface ClientInfo {
   last_name?: string | null;
   phone: string;
 }
+
+export interface OrganizationInfo {
+  id: number;
+  branches: { id: number; name: string }[];
+}
