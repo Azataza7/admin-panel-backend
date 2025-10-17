@@ -132,7 +132,7 @@ OrganizationStaffAuthorizationRouter.post(
   "/refresh",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { refreshToken } = req.body;
+      const refreshToken = req.headers["authorization"];
 
       if (!refreshToken) {
         return res.status(400).json({
